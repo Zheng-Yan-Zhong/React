@@ -2,7 +2,7 @@ import React,{ useEffect , useState} from 'react';
 
 function App() {
   const [num ,setNum] = useState(0)
-  
+
   useEffect(() => {
     console.log("React init");
   },[])
@@ -16,7 +16,7 @@ function App() {
   }, [num])
 
   return <div>
-    <p>{num}</p>
+    <p on>{num}</p>
     <button onClick={() => setNum(num+1)}>Add</button>
   </div>;
 }

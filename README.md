@@ -9,7 +9,6 @@
   - [Doc structure](#doc-structure)
   - [Props](#props)
   - [Function vs Class](#function-vs-class)
-  - [React events](#)
   - [useState](#usestate)
   - [useEffect](#useeffect)
   - [useRef](#useref)
@@ -222,12 +221,6 @@ export default Child;
 ---
 [⬆️ Back to Contents](#table-of-contents)
 
-## React events
-
----
-
-[⬆️ Back to Contents](#table-of-contents)
-
 ## useState
 * 接受一個初始值
 * 取出的第二參數為set+駝峰寫法(非強制,約定成俗)
@@ -391,6 +384,40 @@ export default App;
 [⬆️ Back to Contents](#table-of-contents)
 
 ## useRef
+* 回傳物件
+* 直接操作DOM元素
+
+```javascript
+const inputRef = useRef('')
+```
+![](./images/useref.png)
+
+可以發現回傳一個物件current可以取得我們的value
+
+下面直接示範點擊button可以focus input
+
+```javascript
+import React, {useState, useRef} from 'react';
+
+function App() {
+    //* use useRef get reference
+    const inputRef = useRef('')
+    //button click function
+    const focusFn = () => {
+        inputRef.current.focus()
+    }
+    //then we need to bind input ref
+    return (
+        <div>
+            <input type="text" ref={inputRef} placeholder='input something'/>
+            <button onClick={focusFn}>focus</button>
+        </div>);
+}
+
+export default App;
+```
+
+![](./images/ref.gif)
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
