@@ -1,12 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
-const user = "Ian"
-const navbar = <h1>{user}</h1>
-
 function App() {
-
-
   return (
     <div className="App">
       <header className="App-header">
