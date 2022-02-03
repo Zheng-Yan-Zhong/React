@@ -423,6 +423,75 @@ export default App;
 [⬆️ Back to Contents](#table-of-contents)
 
 ## useContext
+* 建立一個全域資料
+* 避免不必要的組件接受資料
+* `contextAPI`
+  * `<Provider value={data}>`
+
+```javascript
+const value = useContext(Provider)
+```
+
+首先了解檔案結構
+
+我們只要傳遞資料給component3,所以component2即為不需要接收資料之組件
+
+```javascript
+             App
+          / 
+        component2
+        /
+      component3  
+```
+
+
+```javascript
+//App.js
+import React,{createContext, useState, useEffect} from 'react';
+import Component2 from './components/Component2'
+
+export const Data = createContext(null)
+
+function App() {
+  const [user, setUser] = useState('Empty')
+  return (
+    <Data.Provider value={user}>
+      <Component2 />
+    </Data.Provider>
+  );
+}
+
+export default App;
+
+```
+
+```javascript
+//component2
+import React from 'react';
+import Component3 from './Component3';
+function Component2() {
+    return <div>
+        <Component3 />
+    </div>;
+}   
+
+export default Component2
+```
+
+```javascript
+//component3
+import React, {useContext} from 'react';
+import { Data } from '../App';
+function Component3() {
+    const data = useContext(Data)
+    return(
+        <div>{data}</div>
+    )
+}
+
+export default Component3;
+
+```
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
