@@ -13,8 +13,8 @@
   - [useEffect](#useeffect)
   - [useRef](#useref)
   - [useContext](#usecontext)
-  - [memo](#memo)
-  - [useCallback](#usecallback)
+  - [memo](#memo)  
+  - [useCallback](#usecallback) 
   - [useMemo](#usememo)
   - [Redux](#redux)
   - [Packages](#packages)
@@ -497,11 +497,120 @@ export default Component3;
 [⬆️ Back to Contents](#table-of-contents)
 
 ## memo
+* 解決子組件被父組件強迫更新
+* memo無法記憶傳遞call by reference之 props
+
+
+由於React會去檢查組件中的值跟記憶體是否一樣,但這樣也造成一些問題
+
+我們來看一個例子
+
+```javascript
+//App.js
+import React, {useState} from 'react';
+import Component2 from './components/Component2';
+function App() {
+    const [text, setText] = useState('')
+    return (
+    <div>
+        <input type="text" onChange={(e) => setText(e.target.value)}/>
+        <p>{text}</p>
+        <Component2  text="Ian"/>
+    </div>
+    );
+}
+
+export default App;
+
+
+//Component2.js
+import React from 'react';
+
+function Component2({text}) {
+    for(let i = 0; i < 3; i++) {
+        console.log(i);
+    }
+    console.log('1');
+
+    return <div>
+        user:{text}
+    </div>;
+}
+
+export default (Component2);
+```
+![](./images/memo.gif)
+
+我們發現Component2傳遞的Props是固定的,但由於父組件被迫更新
+
+這時候我們可以使用React提供的memo HOC記住Props的值,使其讓React知道不需更新
+
+```javascript
+//App.js
+import React, {useState} from 'react';
+import Component2 from './components/Component2';
+function App() {
+    const [text, setText] = useState('')
+    return (
+    <div>
+        <input type="text" onChange={(e) => setText(e.target.value)}/>
+        <p>{text}</p>
+        <Component2  text="Ian"/>
+    </div>
+    );
+}
+
+export default App;
+
+//Component2.js
+function Component2({text}) {
+    for(let i = 0; i < 3; i++) {
+        console.log(i);
+    }
+    console.log('1');
+
+    return <div>
+        user:{text}
+    </div>;
+}
+
+export default memo(Component2);
+```
+
+![](./images/showMemo.gif)
+
+我們看到了子組件確實沒有被迫更新了
+
+但凡事有個例外,當我今天沒有傳遞Props或是傳遞非物件、陣列都可以達到memo的效果
+
+```javascript
+import React, {useState} from 'react';
+import Component2 from './components/Component2';
+function App() {
+    const [text, setText] = useState('')
+    return (
+    <div>
+        <input type="text" onChange={(e) => setText(e.target.value)}/>
+        <p>{text}</p>
+        <Component2  text={text}/>
+    </div>
+    );
+}
+
+export default App;
+```
+
+![](./images/memoDeep.gif)
+
+若要達到記憶call by reference可以參考useCallback
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
 
 ## useCallback
+* 解決memo無法記憶call by reference的問題
+
+
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
