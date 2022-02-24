@@ -213,6 +213,27 @@ export default Child;
 
 ```
 
+使用物件傳遞多個props
+
+```javascript
+    const [date, setDate] = useState('')    
+    const [isOpen, setIsopen] = useState(false)
+    const [theme, setTheme] = useState('light')
+    const [language, setLanguage] = useState('zh')
+    
+    const props = {
+        isOpen,
+        setIsopen,
+        language,
+        setLanguage,
+        theme,
+        setTheme
+    }
+    return(
+      <Component {...props} />
+    )
+```
+
 ---
 [⬆️ Back to Contents](#table-of-contents)
 
@@ -608,7 +629,7 @@ export default App;
 [⬆️ Back to Contents](#table-of-contents)
 
 ## useCallback
-* 解決memo無法記憶call by reference的問題
+* 解決父組件傳遞function 比對記憶體位址的效能優化問題
 
 
 
@@ -616,11 +637,149 @@ export default App;
 [⬆️ Back to Contents](#table-of-contents)
 
 ## useMemo
+* 避免重複運算造成消耗效能
+
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
 
 ## Redux
+* 解決子組件獲取資料的問題
+[Redux official](https://redux.js.org/introduction/getting-started)
+### Setup
+以下指令適配於react application
+```javascript=
+npm install react-redux
+```
+當然我們也需要安裝redux
+```javascript=
+npm install redux @reduxjs/toolkit
+```
+
+### Introduction
+* 基本概念
+    * Store
+    * Reducer
+    * Slice
+    * Action
+    * Dispatch
+* 常用API
+    * useSelector(callback)
+    * useDispatch
+    * configureStore
+    * createSlice
+
+```javascript
+//store.js
+import { configureStore } from '@reduxjs/toolkit'
+
+export default configureStore({
+    reducer: {}
+})
+```
+
+```javascript
+//App.js
+import { Provider } from 'react-redux'
+import store from './state/store'
+
+function App() {
+    return (
+        <Provider store={store}>
+            //Elements
+        </Provider>
+    )
+}  
+
+```
+
+創建一個themeSlice.js
+
+[Slice tutorial](https://react-redux.js.org/tutorials/quick-start#create-a-redux-state-slice)
+
+```javascript
+import { createSlice } from '@reduxjs/toolkit'
+
+export const themeSlice = createSlice({
+    name: 'theme', //使useSelector辨識
+    initialState: {
+        value: {
+            bgc: 'white',
+            color: 'grey'
+        }
+    },
+    reducers: {
+        darkMode: (state, action) => {
+            state.value = {
+                bgc: 'black',
+                color: 'grey'
+            }
+        },
+        lightMode: (state, action) => {
+            state.value = {
+                bgc: 'white',
+                color: 'grey'
+            }
+        }
+    }
+})
+
+export const { darkMode, lightMode } = themeSlice.actions
+
+export default themeSlice.reducer //導出reducers
+```
+
+並且在一開始的store.js中添加匯出的reducer
+
+```javascript
+//store.js
+import { configureStore } from '@reduxjs/toolkit'
+import themeReducer from './themeSlice'
+
+export default configureStore({
+    reducer: {
+        theme: themeReducer
+        //引入themeSlice中預設導出的themeSlice.reducer
+    }
+})
+```
+
+接下來在欲使用的組件中引入
+```javascript
+import { useSelector, useDispatch } from 'react-redux'
+import { darkMode, lightMode } from '../../state/themeSlice' //引入從themeSlice中的actions
+```
+
+useSelector使用一個callback接收資料
+
+```javascript
+    const theme = useSelector((state) => state.theme.value)
+```
+
+最後的範例
+
+```javascript
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { darkMode, lightMode } from '../../state/themeSlice' 
+//引入從themeSlice中的actions
+function Navbar() {
+    const theme = useSelector((state) => state.theme.value)
+    const dispatch = useDispatch()
+    return (
+        <NavContainer>
+            <h2><IoLogoReact /></h2>
+            <p>{theme.bgc}</p>
+            <button onClick={() => dispatch(darkMode())}>Dark</button>
+            <button onClick={() => dispatch(lightMode())}>light</button>
+        </NavContainer>
+    )
+}
+
+export default Navbar
+```
+
+![](./images/redux.gif)
 
 ---
 [⬆️ Back to Contents](#table-of-contents)
