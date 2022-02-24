@@ -759,19 +759,29 @@ useSelector使用一個callback接收資料
 最後的範例
 
 ```javascript
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { darkMode, lightMode } from '../../state/themeSlice' 
 //引入從themeSlice中的actions
 function Navbar() {
     const theme = useSelector((state) => state.theme.value)
     const dispatch = useDispatch()
+    const toggleTheme = (mode) => {
+        switch(mode) {
+            case "dark":
+                dispatch(darkMode())
+                break;
+            case "light":
+                dispatch(lightMode())
+                break;
+        }
+        alert('theme changed')
+    }
     return (
-        <NavContainer>
+        <NavContainer theme={theme}>
             <h2><IoLogoReact /></h2>
             <p>{theme.bgc}</p>
-            <button onClick={() => dispatch(darkMode())}>Dark</button>
-            <button onClick={() => dispatch(lightMode())}>light</button>
+            <button onClick={() => toggleTheme("dark")}>Dark</button>
+            <button onClick={() => toggleTheme("light")}>light</button>
         </NavContainer>
     )
 }
